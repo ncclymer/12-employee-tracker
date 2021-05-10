@@ -42,12 +42,12 @@ function executeApp() {
         type: "list",
         message: "What would you like to do?",
         choices: [
-            "View All Employees",
+            "View Employees",
             "Edit Employees",
             "View Roles",
             "Edit Roles",
             "View Departments",
-            "Edit Departments"
+            // "Edit Departments"
         ]
     }).then(responses => {
         switch (responses.menu) {
@@ -81,8 +81,8 @@ function editEmp() {
         choices: [
             "Add an Employee",
             "Employee Role",
-            "Employee Manager",
-            "Remove Employee",
+            // "Employee Manager",
+            // "Remove Employee",
             "Main Menu"
         ]
     }).then(response => {
@@ -96,9 +96,9 @@ function editEmp() {
             case "Employee Manager":
                 chngMngr();
                 break;
-            case "Remove Employee":
-                remvEmp();
-                break;
+            // case "Remove Employee":
+            //     remvEmp();
+            //     break;
             case "Main Menu":
                 executeApp();
                 break;
@@ -134,7 +134,7 @@ async function addEmp() {
         {
             name: "role_id",
             type: "list",
-            message: "Select a numeric employee role id:",
+            message: "Select a department for the employee:",
             choices: positions.map(obj => obj.title)
         },
         {
@@ -160,7 +160,7 @@ function editEmp() {
         choices: [
             "Add A New Employee",
             "Change Employee Role",
-            "Change Employee Manager",
+            // "Change Employee Manager",
             "Remove An Employee",
             "Return To Main Menu"
         ]
@@ -172,9 +172,9 @@ function editEmp() {
             case "Change Employee Role":
                 chngRole();
                 break;
-            case "Change Employee Manager":
-                chngMngr();
-                break;
+            // case "Change Employee Manager":
+            //     chngMngr();
+            //     break;
             case "Remove An Employee":
                 remvEmp();
                 break;
@@ -182,6 +182,46 @@ function editEmp() {
                 executeApp();
                 break;
         }
+    })
+};
+
+async function remvEmp() {
+    let employees = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee');
+    employees.push({ id: null, name: "Cancel" });
+
+    inquirer.prompt([
+        {
+            name: "employeeName",
+            type: "list",
+            message: "Delete which employee?",
+            choices: employees.map(obj => obj.name)
+        }
+    ]).then(response => {
+        if (response.employeeName != "Cancel") {
+            let termedEmp = employees.find(obj => obj.name === response.employeeName);
+            db.query("DELETE FROM employee WHERE id=?", termedEmp.id);
+            console.log("\x1b[32m", `${response.employeeName} was removed.`);
+        }
+        executeApp();
+    })
+};
+
+async function roleSum() {
+    console.log(' ');
+    await db.query('SELECT r.id, title, salary, name AS department FROM role r LEFT JOIN department d ON department_id = d.id', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        executeApp();
+    })
+};
+
+
+async function showDept() {
+    console.log(' ');
+    await db.query('SELECT id, name AS department FROM department', (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        executeApp();
     })
 };
 
