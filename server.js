@@ -61,7 +61,7 @@ function executeApp() {
                 roleSum();
                 break;
             case "Edit Roles":
-                addRole();
+                editRole();
                 break;
             case "View Departments":
                 showDept();
@@ -206,6 +206,35 @@ async function remvEmp() {
     })
 };
 
+function editRole() {
+    inquirer.prompt({
+        name: "editRoles",
+        type: "list",
+        message: "Please choose an option:",
+        choices: [
+            "Add New Role",
+            "Update Role",
+            "Remove Role",
+            "Return To Main Menu"
+        ]
+    }).then(responses => {
+        switch (responses.editRoles) {
+            case "Add New Role":
+                addRole();
+                break;
+            case "Update Role":
+                chngRole();
+                break;
+            case "Remove Role":
+                remvRole();
+                break;
+            case "Return To Main Menu":
+                executeApp();
+                break;
+        }
+    })
+};
+
 async function roleSum() {
     console.log(' ');
     await db.query('SELECT r.id, title, salary, name AS department FROM role r LEFT JOIN department d ON department_id = d.id', (err, res) => {
@@ -277,6 +306,29 @@ async function chngRole() {
         executeApp();
     })
 };
+
+async function remvRole() {
+    let roles = await db.query('SELECT id, title FROM role');
+    roles.push({ id: null, title: "Cancel" });
+
+    inquirer.prompt([
+        {
+            name: "roleName",
+            type: "list",
+            message: "Which role should be removed?",
+            choices: roles.map(obj => obj.title)
+        }
+    ]).then(response => {
+        if (response.roleName != "Cancel") {
+            let roleDel = roles.find(obj => obj.title === response.roleName);
+            db.query("DELETE FROM role WHERE id=?", roleDel.id);
+            console.log("\x1b[32m", `${response.roleName} was removed.`);
+        }
+        executeApp();
+    })
+};
+
+
 
 
 async function showDept() {
