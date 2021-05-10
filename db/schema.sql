@@ -14,7 +14,6 @@ CREATE TABLE department (
     name VARCHAR(30) NOT NULL
 );
 
-
 CREATE TABLE role (
     id INT auto_increment PRIMARY KEY NOT NULL,
     title VARCHAR(30) NOT NULL,
