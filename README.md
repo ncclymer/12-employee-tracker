@@ -20,7 +20,7 @@
     This project can be downloaded from the git repository below. You will need to run an npm install in your terminal.
 
   ## Usage:
-    This project is used locally and in terminal using the CLI node.server.js
+    This project is used locally and in terminal using the CLI node server.js
 
   ## Licence:
   NOTICE! - This application has the following licence type: ![licence](https://img.shields.io/badge/License-MIT-blue.svg "Licence Badge")
