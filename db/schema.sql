@@ -1,12 +1,12 @@
-DROP DATABASE IF EXISTS employeeDB;
+DROP DATABASE IF EXISTS emp_db;
 
-CREATE DATABASE employeeDB;
+CREATE DATABASE emp_db;
 
-USE employeeDB;DROP DATABASE IF EXISTS employeeDB;
+USE emp_db;DROP DATABASE IF EXISTS emp_db;
 
-CREATE DATABASE employeeDB;
+CREATE DATABASE emp_db;
 
-USE employeeDB;
+USE emp_db;
 
 
 CREATE TABLE department (

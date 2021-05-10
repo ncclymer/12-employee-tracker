@@ -33,5 +33,46 @@ const db = new Database({
     port: 3306,
     user: "root",
     password: "bAVqss3GpRKQ",
-    database: "employeeDB"
+    database: "emp_db"
 });
+
+function executeApp() {
+    inquirer.prompt({
+        name: "menu",
+        type: "list",
+        message: "What would you like to do?",
+        choices: [
+            "View All Employees",
+            "Edit Employeee Info",
+            "View Roles",
+            "Edit Roles",
+            "View Departments",
+            "Edit Departments"
+        ]
+    }).then(responses => {
+        switch (responses.menu) {
+            case "View Employees":
+                showEmployeeSummary();
+                break;
+            case "Edit Employees":
+                editEmployeeOptions();
+                break;
+            case "View Roles":
+                showRoleSummary();
+                break;
+            case "Edit Roles":
+                editRoleOptions();
+                break;
+            case "View Departments":
+                showDepartments();
+                break;
+            case "Edit Departments":
+                editDepartmentOptions();
+                break;
+        }
+    });
+}
+
+console.log ('Welcome to the employee tracker!')
+
+executeApp ();
