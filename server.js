@@ -47,7 +47,7 @@ function executeApp() {
             "View Roles",
             "Edit Roles",
             "View Departments",
-            // "Edit Departments"
+            "Edit Departments"
         ]
     }).then(responses => {
         switch (responses.menu) {
@@ -67,7 +67,7 @@ function executeApp() {
                 showDept();
                 break;
             case "Edit Departments":
-                editDept();
+                addDept();
                 break;
         }
     });
@@ -284,6 +284,20 @@ async function showDept() {
     await db.query('SELECT id, name AS department FROM department', (err, res) => {
         if (err) throw err;
         console.table(res);
+        executeApp();
+    })
+};
+
+async function addDept() {
+    inquirer.prompt([
+        {
+            name: "dept",
+            type: "input",
+            message: "Enter the new department:",
+        }
+    ]).then(answers => {
+        db.query("INSERT INTO department (name) VALUES (?)", [answers.dept]);
+        console.log("\x1b[32m", `${answers.dept} was added to department listing.`);
         executeApp();
     })
 };
