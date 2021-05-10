@@ -223,7 +223,7 @@ function editRole() {
                 addRole();
                 break;
             case "Update Role":
-                chngRole();
+                updtRole();
                 break;
             case "Remove Role":
                 remvRole();
@@ -232,6 +232,51 @@ function editRole() {
                 executeApp();
                 break;
         }
+    })
+};
+
+async function updtRole() {
+    let roles = await db.query('SELECT id, title FROM role');
+    roles.push({ id: null, title: "Cancel" });
+    let departments = await db.query('SELECT id, name FROM department');
+
+    inquirer.prompt([
+        {
+            name: "roleName",
+            type: "list",
+            message: "Which role would you like to update?",
+            choices: roles.map(obj => obj.title)
+        }
+    ]).then(response => {
+        if (response.roleName == "Cancel") {
+            executeApp();
+            return;
+        }
+        inquirer.prompt([
+            {
+                name: "salary",
+                type: "input",
+                message: "Enter annual salary:",
+                validate: input => {
+                    if (!isNaN(input)) {
+                        return true;
+                    }
+                    return "Please enter a valid number."
+                }
+            },
+            {
+                name: "uptdRoleDept",
+                type: "list",
+                message: "Choose the role's department:",
+                choices: departments.map(obj => obj.name)
+            }
+        ]).then(answers => {
+            let depID = departments.find(obj => obj.name === answers.uptdRoleDept).id
+            let roleID = roles.find(obj => obj.title === response.roleName).id
+            db.query("UPDATE role SET title=?, salary=?, department_id=? WHERE id=?", [response.roleName, answers.salary, depID, roleID]);
+            console.log("\x1b[32m", `${response.roleName} was updated.`);
+            executeApp();
+        })
     })
 };
 
@@ -254,7 +299,7 @@ async function addRole() {
             message: "Enter role:",
         },
         {
-            name: "salAmt",
+            name: "salary",
             type: "input",
             message: "Enter salary:",
             validate: input => {
@@ -265,15 +310,15 @@ async function addRole() {
             }
         },
         {
-            name: "newRoleDept",
+            name: "uptdRoleDept",
             type: "list",
             message: "Select role department:",
             choices: departments.map(obj => obj.name)
         }
     ]).then(answers => {
-        let depID = departments.find(obj => obj.name === answers.newRoleDept).id
-        db.query("INSERT INTO role (title, salary, department_id) VALUES (?)", [[answers.role, answers.salAmt, depID]]);
-        console.log("\x1b[32m", `${answers.role} was added. Department: ${answers.newRoleDept}`);
+        let depID = departments.find(obj => obj.name === answers.uptdRoleDept).id
+        db.query("INSERT INTO role (title, salary, department_id) VALUES (?)", [[answers.role, answers.salary, depID]]);
+        console.log("\x1b[32m", `${answers.role} was added. Department: ${answers.uptdRoleDept}`);
         executeApp();
     })
 };
