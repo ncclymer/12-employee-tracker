@@ -125,13 +125,11 @@ async function addEmp() {
             name: "first_name",
             type: "input",
             message: "Enter the employee's first name:",
-            validate: confirmStringInput
         },
         {
             name: "last_name",
             type: "input",
             message: "Enter the employee's last name:",
-            validate: confirmStringInput
         },
         {
             name: "role_id",
@@ -152,6 +150,39 @@ async function addEmp() {
         console.log("\x1b[32m", `${answers.first_name} was added.`);
         executeApp();
     });
+};
+
+function editEmp() {
+    inquirer.prompt({
+        name: "editChoice",
+        type: "list",
+        message: "What would you like to update?",
+        choices: [
+            "Add A New Employee",
+            "Change Employee Role",
+            "Change Employee Manager",
+            "Remove An Employee",
+            "Return To Main Menu"
+        ]
+    }).then(response => {
+        switch (response.editChoice) {
+            case "Add A New Employee":
+                addEmp();
+                break;
+            case "Change Employee Role":
+                chngRole();
+                break;
+            case "Change Employee Manager":
+                chngMngr();
+                break;
+            case "Remove An Employee":
+                remvEmp();
+                break;
+            case "Return To Main Menu":
+                executeApp();
+                break;
+        }
+    })
 };
 
 console.log ('Welcome to the employee tracker!')
