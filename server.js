@@ -61,7 +61,7 @@ function executeApp() {
                 roleSum();
                 break;
             case "Edit Roles":
-                editRole();
+                addRole();
                 break;
             case "View Departments":
                 showDept();
@@ -211,6 +211,40 @@ async function roleSum() {
     await db.query('SELECT r.id, title, salary, name AS department FROM role r LEFT JOIN department d ON department_id = d.id', (err, res) => {
         if (err) throw err;
         console.table(res);
+        executeApp();
+    })
+};
+
+async function addRole() {
+    let departments = await db.query('SELECT id, name FROM department');
+
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter role:",
+        },
+        {
+            name: "salAmt",
+            type: "input",
+            message: "Enter salary:",
+            validate: input => {
+                if (!isNaN(input)) {
+                    return true;
+                }
+                return "Please enter a valid number."
+            }
+        },
+        {
+            name: "newRoleDept",
+            type: "list",
+            message: "Select role department:",
+            choices: departments.map(obj => obj.name)
+        }
+    ]).then(answers => {
+        let depID = departments.find(obj => obj.name === answers.newRoleDept).id
+        db.query("INSERT INTO role (title, salary, department_id) VALUES (?)", [[answers.role, answers.salAmt, depID]]);
+        console.log("\x1b[32m", `${answers.role} was added. Department: ${answers.newRoleDept}`);
         executeApp();
     })
 };
